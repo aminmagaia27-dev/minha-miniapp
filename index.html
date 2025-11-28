@@ -90,7 +90,7 @@
 
         <div class="card menu">
             <h3>📌 Menu</h3>
-            <button onclick="mostrarAnuncio()">Assistir anúncio</button>
+            <button onclick="assistirAds()">Assistir anúncio</button>
             <button>Recompensas</button>
             <button>Ofertas</button>
             <button>Sobre</button>
@@ -104,32 +104,22 @@
             document.getElementById("pontos").innerText = pontos;
         }
 
-        function mostrarAnuncio() {
+        function assistirAds() {
             try {
-                show_10250519({
-                    type: 'inApp',
-                    inAppSettings: {
-                        frequency: 1,
-                        capping: 0.1,
-                        interval: 30,
-                        timeout: 1,
-                        everyPage: false
-                    }
+                show_10250519().then(() => {
+                    // Só acontece depois que o usuário vê o anúncio completo
+                    pontos += 1;
+                    atualizarPontos();
                 });
-
-                // recompensa automática
-                pontos += 1;
-                atualizarPontos();
-
             } catch(e){
-                console.log("SDK carregando...");
+                console.log("SDK não carregou ainda...");
             }
         }
 
-        // anúncio automático ao abrir o app
+        // Anúncio automático ao abrir
         window.onload = () => {
             setTimeout(() => {
-                mostrarAnuncio();
+                assistirAds();
             }, 1500);
         };
     </script>
