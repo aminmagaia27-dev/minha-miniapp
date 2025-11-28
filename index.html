@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Minha Mini App</title>
+</head>
+<body>
+  <h1>Olá, bem-vindo à minha Mini App!</h1>
+  <p>Esta página está hospedada no GitHub Pages.</p>
+
+  <script>
+    const webApp = window.Telegram?.WebApp;
+    if (webApp) {
+      webApp.ready();
+      document.body.innerHTML += "<p>Rodando dentro do Telegram!</p>";
+    } else {
+      document.body.innerHTML += "<p>Abra esta página pelo bot do Telegram.</p>";
+    }
+  </script>
+</body>
+</html>
