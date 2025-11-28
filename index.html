@@ -5,22 +5,35 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Minha Mini App</title>
 
-    <!-- MONETAG SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='10250519' data-sdk='show_10250519'></script>
+    <!-- SDK do Monetag (OBRIGATÓRIO) -->
+    <script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
 </head>
 
 <body>
     <h1>Olá, bem-vindo à minha Mini App!</h1>
     <p>Esta página está hospedada no GitHub Pages.</p>
 
-    <script>
-        const webApp = window?.Telegram?.WebApp;
+    <!-- Botão para exibir anúncios -->
+    <button onclick="mostrarAnuncio()">Mostrar Anúncio</button>
 
-        if (webApp) {
-            webApp.ready();
-            document.body.innerHTML += "<p>Rodando dentro do Telegram!</p>";
-        } else {
-            document.body.innerHTML += "<p>Abra esta página pelo bot do Telegram.</p>";
+    <script>
+        // Função chamada ao clicar no botão
+        function mostrarAnuncio() {
+            try {
+                // In-App Interstitial
+                show_10250519({
+                    type: 'inApp',
+                    inAppSettings: {
+                        frequency: 2,
+                        capping: 0.1,
+                        interval: 30,
+                        timeout: 5,
+                        everyPage: false
+                    }
+                })
+            } catch (e) {
+                alert("SDK ainda carregando. Tente novamente em alguns segundos.");
+            }
         }
     </script>
 </body>
