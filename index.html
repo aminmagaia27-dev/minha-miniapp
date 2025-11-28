@@ -3,38 +3,136 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Minha Mini App</title>
+    <title>Mini App Premium</title>
 
-    <!-- SDK do Monetag (OBRIGATÓRIO) -->
+    <!-- SDK do Monetag -->
     <script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fa;
+            color: #222;
+        }
+
+        .topbar {
+            background: #0088cc;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0088cc;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .menu button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #0088cc;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            background: #0077b3;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Olá, bem-vindo à minha Mini App!</h1>
-    <p>Esta página está hospedada no GitHub Pages.</p>
 
-    <!-- Botão para exibir anúncios -->
-    <button onclick="mostrarAnuncio()">Mostrar Anúncio</button>
+    <div class="topbar">
+        <div class="avatar">A</div>
+        <div><b>AminBot Mini App</b></div>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>🎉 Bem-vindo!</h2>
+            <p>Ganhe recompensas assistindo anúncios.</p>
+        </div>
+
+        <div class="card">
+            <h3>🏆 Seus pontos:</h3>
+            <p id="pontos">0</p>
+        </div>
+
+        <div class="card menu">
+            <h3>📌 Menu</h3>
+            <button onclick="mostrarAnuncio()">Assistir anúncio</button>
+            <button>Recompensas</button>
+            <button>Ofertas</button>
+            <button>Sobre</button>
+        </div>
+    </div>
 
     <script>
-        // Função chamada ao clicar no botão
+        let pontos = 0;
+
+        function atualizarPontos() {
+            document.getElementById("pontos").innerText = pontos;
+        }
+
         function mostrarAnuncio() {
             try {
-                // In-App Interstitial
                 show_10250519({
                     type: 'inApp',
                     inAppSettings: {
-                        frequency: 2,
+                        frequency: 1,
                         capping: 0.1,
                         interval: 30,
-                        timeout: 5,
+                        timeout: 1,
                         everyPage: false
                     }
-                })
-            } catch (e) {
-                alert("SDK ainda carregando. Tente novamente em alguns segundos.");
+                });
+
+                // recompensa automática
+                pontos += 1;
+                atualizarPontos();
+
+            } catch(e){
+                console.log("SDK carregando...");
             }
         }
+
+        // anúncio automático ao abrir o app
+        window.onload = () => {
+            setTimeout(() => {
+                mostrarAnuncio();
+            }, 1500);
+        };
     </script>
+
 </body>
 </html>
