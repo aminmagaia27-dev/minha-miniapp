@@ -1,128 +1,149 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Mini App Premium</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Amin Mini App</title>
 
-    <!-- SDK do Monetag -->
-    <script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
+<!-- Monetag SDK -->
+<script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fa;
-            color: #222;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg,#6a11cb,#2575fc);
+        background-attachment: fixed;
+        padding: 0;
+        color: #fff;
+    }
 
-        .topbar {
-            background: #0088cc;
-            color: white;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    .header {
+        text-align: center;
+        padding: 25px 10px;
+        animation: fadeDown 0.8s ease;
+    }
 
-        .avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #0088cc;
-            font-weight: bold;
-            font-size: 20px;
-        }
+    .header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
 
-        .container {
-            padding: 20px;
-        }
+    .header p {
+        margin-top: 8px;
+        opacity: 0.9;
+    }
 
-        .card {
-            background: white;
-            padding: 18px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .menu button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 10px;
-            background: #0088cc;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
+    .card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 20px;
+        margin: 20px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        animation: fadeUp 0.8s ease;
+    }
 
-        .menu button:hover {
-            background: #0077b3;
-        }
-    </style>
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .points {
+        font-size: 26px;
+        font-weight: bold;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .coin {
+        width: 34px;
+        height: 34px;
+        background: gold;
+        border-radius: 50%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 900;
+        font-size: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .menu button {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 14px;
+        margin-top: 12px;
+        background: #fff;
+        color: #2575fc;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .menu button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+</style>
+
 </head>
-
 <body>
 
-    <div class="topbar">
-        <div class="avatar">A</div>
-        <div><b>AminBot Mini App</b></div>
+<div class="header">
+    <h1>🎮 Amin Mini App</h1>
+    <p>Ganhe moedas assistindo anúncios!</p>
+</div>
+
+<div class="card">
+    <h2>🏆 Seus pontos</h2>
+    <div class="points">
+        <div class="coin">★</div> <span id="pontos">0</span>
     </div>
+</div>
 
-    <div class="container">
+<div class="card menu">
+    <h2>📌 Menu</h2>
+    <button onclick="assistirAds()">▶ Assistir anúncio</button>
+    <button>🎁 Recompensas</button>
+    <button>🔥 Ofertas</button>
+    <button>ℹ Sobre</button>
+</div>
 
-        <div class="card">
-            <h2>🎉 Bem-vindo!</h2>
-            <p>Ganhe recompensas assistindo anúncios.</p>
-        </div>
+<script>
+    let pontos = 0;
 
-        <div class="card">
-            <h3>🏆 Seus pontos:</h3>
-            <p id="pontos">0</p>
-        </div>
+    function atualizarPontos() {
+        document.getElementById("pontos").innerText = pontos;
+    }
 
-        <div class="card menu">
-            <h3>📌 Menu</h3>
-            <button onclick="assistirAds()">Assistir anúncio</button>
-            <button>Recompensas</button>
-            <button>Ofertas</button>
-            <button>Sobre</button>
-        </div>
-    </div>
+    function assistirAds() {
+        show_10250519().then(() => {
+            pontos += 1;
+            atualizarPontos();
+        }).catch(() => {
+            console.log("Anúncio não carregou");
+        });
+    }
 
-    <script>
-        let pontos = 0;
-
-        function atualizarPontos() {
-            document.getElementById("pontos").innerText = pontos;
-        }
-
-        function assistirAds() {
-            try {
-                show_10250519().then(() => {
-                    // Só acontece depois que o usuário vê o anúncio completo
-                    pontos += 1;
-                    atualizarPontos();
-                });
-            } catch(e){
-                console.log("SDK não carregou ainda...");
-            }
-        }
-
-        // Anúncio automático ao abrir
-        window.onload = () => {
-            setTimeout(() => {
-                assistirAds();
-            }, 1500);
-        };
-    </script>
+    // Mostra anúncio automático ao abrir
+    window.onload = () => {
+        setTimeout(() => {
+            assistirAds();
+        }, 1500);
+    };
+</script>
 
 </body>
 </html>
