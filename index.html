@@ -1,48 +1,263 @@
-<div id="menu">
-    <button onclick="assistirAnuncio()">▶ Assistir anúncio</button>
-    <button onclick="abrirRecompensas()">🎁 Recompensas</button>
-    <button onclick="abrirOfertas()">🔥 Ofertas</button>
-    <button onclick="abrirSobre()">ℹ Sobre</button>
-</div>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PlayWin — Ganhe recompensas</title>
 
-<p>Suas moedas: <span id="moedas">0</span></p>
+<!-- Monetag SDK: já configurado com sua zone -->
+<script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
+
+<!-- Fonte opcional (fallback se bloqueado) -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#2a0f4d;
+    --bg2:#242a8b;
+    --accent:#7c5cff;
+    --neon:#39f0ff;
+    --card-bg: rgba(255,255,255,0.06);
+    --glass-blur: 8px;
+  }
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Arial; -webkit-font-smoothing:antialiased;}
+  body{
+    background: radial-gradient(circle at 10% 10%, #2e0b52 0%, #1b1640 30%, #071026 100%);
+    color:#fff;
+    -webkit-user-select:none;
+    overflow:auto;
+  }
+
+  /* Top */
+  .topbar{
+    display:flex;align-items:center;gap:12px;padding:18px 20px;
+    background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    position:sticky;top:0;z-index:8;
+  }
+  .logo {
+    width:54px;height:54px;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),#4bb1ff);
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+    font-size:20px;color:#fff;box-shadow: 0 6px 20px rgba(92, 60, 255,0.25);
+  }
+  .top-title {font-size:18px;font-weight:700;}
+  .top-sub {font-size:12px;opacity:.9;color:rgba(255,255,255,0.85);}
+
+  /* layout container */
+  .wrap{max-width:420px;margin:18px auto;padding:0 12px;}
+
+  /* Card */
+  .card{
+    background:var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius:16px;padding:18px;margin-bottom:16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.03);
+    position:relative; overflow:hidden;
+  }
+  .card::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(600px 150px at 10% 0%, rgba(124,92,255,0.08), transparent 8%),
+                radial-gradient(500px 200px at 90% 100%, rgba(57,240,255,0.05), transparent 8%);
+  }
+
+  /* Points */
+  .points-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .points-left{display:flex;gap:12px;align-items:center}
+  .coin{
+    width:58px;height:58px;border-radius:12px;background:linear-gradient(135deg,#ffd86b,#ffb74d);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#4b2f00;font-size:22px;
+    box-shadow: 0 8px 18px rgba(255,160,40,0.18), inset 0 -8px 18px rgba(0,0,0,0.08);
+  }
+  .points-meta{line-height:1}
+  .points-meta .label{font-size:13px;opacity:.9}
+  .points-meta .value{font-size:22px;font-weight:700;margin-top:4px}
+
+  /* menu */
+  .menu{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
+  .btn{
+    background:linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.06));
+    border-radius:12px;padding:14px 12px;border:1px solid rgba(255,255,255,0.06);color:#fff;font-weight:700;
+    display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .13s ease, box-shadow .13s;
+    box-shadow: 0 8px 20px rgba(10,10,20,0.25);
+  }
+  .btn:hover{ transform:translateY(-4px); box-shadow: 0 18px 30px rgba(10,10,20,0.35); }
+  .btn .icon{width:36px;height:36px;background:linear-gradient(135deg,var(--neon), #6ffcff);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#022;}
+  .btn .label{flex:1;text-align:left;font-size:16px}
+
+  /* small text and footer */
+  .muted{font-size:13px;opacity:.85;color:rgba(255,255,255,0.92)}
+  .footer{font-size:12px;color:rgba(255,255,255,0.6);text-align:center;margin:6px 0 24px}
+
+  /* modal */
+  .modal{
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);min-width:280px;
+    background:linear-gradient(180deg, rgba(6,6,23,0.96), rgba(3,3,15,0.96));
+    border-radius:14px;padding:14px;z-index:30;color:#fff;box-shadow:0 20px 40px rgba(0,0,0,0.6);
+    display:none;
+  }
+  .modal h3{margin:0 0 8px}
+  .modal p{font-size:14px;opacity:.95}
+  .modal .close{margin-top:12px;padding:10px;border-radius:10px;border:none;background:#222;color:#fff;cursor:pointer}
+
+  /* toast */
+  .toast{position:fixed;left:14px;bottom:18px;background:rgba(0,0,0,0.6);padding:10px 14px;border-radius:12px;color:#fff;z-index:60;display:none}
+
+  /* small screens safe */
+  @media (max-width:420px){
+    .wrap{padding:0 10px}
+    .logo{width:46px;height:46px}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">PW</div>
+    <div>
+      <div class="top-title">PlayWin</div>
+      <div class="top-sub">Ganhe moedas assistindo anúncios</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="card-points">
+      <div class="points-row">
+        <div class="points-left">
+          <div class="coin">★</div>
+          <div class="points-meta">
+            <div class="label">🏆 Seus pontos</div>
+            <div class="value" id="pontos">0</div>
+          </div>
+        </div>
+        <div class="muted">Nível: <span id="nivel">1</span></div>
+      </div>
+      <div style="margin-top:12px" class="muted">Veja anúncios recompensados para ganhar mais!</div>
+    </div>
+
+    <div class="card">
+      <div class="menu">
+        <div class="btn" id="btn-watch" onclick="assistirAnuncio()">
+          <div class="icon">▶</div>
+          <div class="label">Assistir Anúncio</div>
+        </div>
+
+        <div class="btn" onclick="abrirRecompensas()">
+          <div class="icon">🎁</div>
+          <div class="label">Recompensas</div>
+        </div>
+
+        <div class="btn" onclick="abrirOfertas()">
+          <div class="icon">🔥</div>
+          <div class="label">Ofertas</div>
+        </div>
+
+        <div class="btn" onclick="abrirSobre()">
+          <div class="icon">ℹ</div>
+          <div class="label">Sobre</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Powered by PlayWin • Seus pontos são armazenados localmente</div>
+  </div>
+
+  <!-- modais -->
+  <div class="modal" id="modal-rewards">
+    <h3>🎁 Recompensas</h3>
+    <p id="rewards-list">Você tem <b id="rewards-count">0</b> moedas.</p>
+    <button class="close" onclick="closeModal('modal-rewards')">Fechar</button>
+  </div>
+
+  <div class="modal" id="modal-offers">
+    <h3>🔥 Ofertas</h3>
+    <p>Confira em breve ofertas especiais dentro do app.</p>
+    <button class="close" onclick="closeModal('modal-offers')">Fechar</button>
+  </div>
+
+  <div class="modal" id="modal-sobre">
+    <h3>ℹ Sobre PlayWin</h3>
+    <p>PlayWin recompensa usuários por assistir anúncios — 1 moeda por anúncio. Segue as regras do monetizador.</p>
+    <button class="close" onclick="closeModal('modal-sobre')">Fechar</button>
+  </div>
+
+  <div class="toast" id="toast">Você ganhou 1 moeda!</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("moedas").innerText =
-        localStorage.getItem("moedas") || "0";
+/* ---------- Configurações ---------- */
+// autoShow: true = tenta abrir anúncio automaticamente ao entrar
+const autoShow = true;
+// valor em moedas por anúncio
+const rewardAmount = 1;
+
+/* ---------- Estado e utilitários ---------- */
+function getCoins(){ return parseInt(localStorage.getItem('playwin_coins')||'0'); }
+function setCoins(v){ localStorage.setItem('playwin_coins', String(v)); document.getElementById('pontos').innerText = v; document.getElementById('rewards-count').innerText = v; }
+function addCoins(n){ const v=getCoins()+n; setCoins(v); showToast('+'+n+' moeda(s)'); updateLevel(); }
+function showToast(text){
+  const t=document.getElementById('toast'); t.innerText = text; t.style.display='block';
+  setTimeout(()=> t.style.display='none',2200);
+}
+function updateLevel(){
+  const c = getCoins();
+  const lvl = Math.floor(1 + c/10); document.getElementById('nivel').innerText = lvl;
+}
+
+/* ---------- Modal helpers ---------- */
+function openModal(id){ document.getElementById(id).style.display='block'; }
+function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+/* ---------- Monetag Rewarded Interstitial ---------- */
+async function assistirAnuncio(){
+  try {
+    // chama o rewarded interstitial do Monetag
+    if (typeof show_10250519 !== 'function') {
+      showToast('Anúncio não carregado ainda, tente em alguns segundos.');
+      return;
+    }
+
+    // desativa botão até terminar
+    const btn = document.getElementById('btn-watch'); btn.style.opacity=0.6; btn.style.pointerEvents='none';
+
+    // show returns a promise that resolves when ad is watched
+    await show_10250519();
+
+    // recompensa somente quando promise resolve
+    addCoins(rewardAmount);
+
+    // reativa botão
+    btn.style.opacity=1; btn.style.pointerEvents='auto';
+  } catch(e){
+    console.error('Erro ao exibir anúncio:', e);
+    showToast('Falha ao carregar anúncio.');
+    // reativa botão
+    const btn = document.getElementById('btn-watch'); btn.style.opacity=1; btn.style.pointerEvents='auto';
+  }
+}
+
+/* ---------- Outros menus ---------- */
+function abrirRecompensas(){ openModal('modal-rewards'); }
+function abrirOfertas(){ openModal('modal-offers'); }
+function abrirSobre(){ openModal('modal-sobre'); }
+
+/* ---------- Inicialização ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  setCoins(getCoins());
+  updateLevel();
+
+  // auto show opcional
+  if (autoShow){
+    // tenta abrir após delay (pode falhar caso skd não carregue ainda)
+    setTimeout(()=>{
+      // só tenta se usuário ainda não ganhou nas últimas X segundos (simples prevenção)
+      if (getCoins() === 0) {
+        assistirAnuncio();
+      }
+    }, 1400);
+  }
 });
-
-// Assistir anúncio (Rewarded Interstitial)
-function assistirAnuncio() {
-    show_10250519()
-        .then(() => {
-            adicionarMoedas(1);
-            alert("Você ganhou 1 moeda!");
-        })
-        .catch(() => {
-            alert("Falha ao carregar anúncio.");
-        });
-}
-
-// Função para somar moedas
-function adicionarMoedas(qtd) {
-    let total = parseInt(localStorage.getItem("moedas") || "0");
-    total += qtd;
-    localStorage.setItem("moedas", total);
-    document.getElementById("moedas").innerText = total;
-}
-
-// Outros botões
-function abrirRecompensas() {
-    alert("Aqui você verá suas recompensas!");
-}
-
-function abrirOfertas() {
-    alert("Nenhuma oferta disponível agora!");
-}
-
-function abrirSobre() {
-    alert("AminBot - Sistema de anúncios recompensados.");
-}
 </script>
+
+</body>
+</html>
