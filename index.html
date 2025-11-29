@@ -1,149 +1,48 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Amin Mini App</title>
-
-<!-- Monetag SDK -->
-<script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
-
-<style>
-    body {
-        margin: 0;
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg,#6a11cb,#2575fc);
-        background-attachment: fixed;
-        padding: 0;
-        color: #fff;
-    }
-
-    .header {
-        text-align: center;
-        padding: 25px 10px;
-        animation: fadeDown 0.8s ease;
-    }
-
-    .header h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        text-shadow: 0 3px 6px rgba(0,0,0,0.3);
-    }
-
-    .header p {
-        margin-top: 8px;
-        opacity: 0.9;
-    }
-
-    @keyframes fadeDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 20px;
-        margin: 20px;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-        animation: fadeUp 0.8s ease;
-    }
-
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .points {
-        font-size: 26px;
-        font-weight: bold;
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .coin {
-        width: 34px;
-        height: 34px;
-        background: gold;
-        border-radius: 50%;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: 900;
-        font-size: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    }
-
-    .menu button {
-        width: 100%;
-        padding: 15px;
-        font-size: 16px;
-        border: none;
-        border-radius: 14px;
-        margin-top: 12px;
-        background: #fff;
-        color: #2575fc;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.25s;
-    }
-
-    .menu button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    }
-</style>
-
-</head>
-<body>
-
-<div class="header">
-    <h1>🎮 Amin Mini App</h1>
-    <p>Ganhe moedas assistindo anúncios!</p>
+<div id="menu">
+    <button onclick="assistirAnuncio()">▶ Assistir anúncio</button>
+    <button onclick="abrirRecompensas()">🎁 Recompensas</button>
+    <button onclick="abrirOfertas()">🔥 Ofertas</button>
+    <button onclick="abrirSobre()">ℹ Sobre</button>
 </div>
 
-<div class="card">
-    <h2>🏆 Seus pontos</h2>
-    <div class="points">
-        <div class="coin">★</div> <span id="pontos">0</span>
-    </div>
-</div>
-
-<div class="card menu">
-    <h2>📌 Menu</h2>
-    <button onclick="assistirAds()">▶ Assistir anúncio</button>
-    <button>🎁 Recompensas</button>
-    <button>🔥 Ofertas</button>
-    <button>ℹ Sobre</button>
-</div>
+<p>Suas moedas: <span id="moedas">0</span></p>
 
 <script>
-    let pontos = 0;
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("moedas").innerText =
+        localStorage.getItem("moedas") || "0";
+});
 
-    function atualizarPontos() {
-        document.getElementById("pontos").innerText = pontos;
-    }
-
-    function assistirAds() {
-        show_10250519().then(() => {
-            pontos += 1;
-            atualizarPontos();
-        }).catch(() => {
-            console.log("Anúncio não carregou");
+// Assistir anúncio (Rewarded Interstitial)
+function assistirAnuncio() {
+    show_10250519()
+        .then(() => {
+            adicionarMoedas(1);
+            alert("Você ganhou 1 moeda!");
+        })
+        .catch(() => {
+            alert("Falha ao carregar anúncio.");
         });
-    }
+}
 
-    // Mostra anúncio automático ao abrir
-    window.onload = () => {
-        setTimeout(() => {
-            assistirAds();
-        }, 1500);
-    };
+// Função para somar moedas
+function adicionarMoedas(qtd) {
+    let total = parseInt(localStorage.getItem("moedas") || "0");
+    total += qtd;
+    localStorage.setItem("moedas", total);
+    document.getElementById("moedas").innerText = total;
+}
+
+// Outros botões
+function abrirRecompensas() {
+    alert("Aqui você verá suas recompensas!");
+}
+
+function abrirOfertas() {
+    alert("Nenhuma oferta disponível agora!");
+}
+
+function abrirSobre() {
+    alert("AminBot - Sistema de anúncios recompensados.");
+}
 </script>
-
-</body>
-</html>
