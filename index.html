@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>PlayWin — Ganhe recompensas</title>
 
-<!-- Monetag SDK: já configurado com sua zone -->
+<!-- Monetag SDK -->
 <script src="//libtl.com/sdk.js" data-zone="10250519" data-sdk="show_10250519"></script>
 
-<!-- Fonte opcional (fallback se bloqueado) -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -28,7 +27,6 @@
     overflow:auto;
   }
 
-  /* Top */
   .topbar{
     display:flex;align-items:center;gap:12px;padding:18px 20px;
     background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
@@ -44,10 +42,8 @@
   .top-title {font-size:18px;font-weight:700;}
   .top-sub {font-size:12px;opacity:.9;color:rgba(255,255,255,0.85);}
 
-  /* layout container */
   .wrap{max-width:420px;margin:18px auto;padding:0 12px;}
 
-  /* Card */
   .card{
     background:var(--card-bg);
     backdrop-filter: blur(var(--glass-blur));
@@ -62,7 +58,6 @@
                 radial-gradient(500px 200px at 90% 100%, rgba(57,240,255,0.05), transparent 8%);
   }
 
-  /* Points */
   .points-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .points-left{display:flex;gap:12px;align-items:center}
   .coin{
@@ -70,11 +65,9 @@
     display:flex;align-items:center;justify-content:center;font-weight:800;color:#4b2f00;font-size:22px;
     box-shadow: 0 8px 18px rgba(255,160,40,0.18), inset 0 -8px 18px rgba(0,0,0,0.08);
   }
-  .points-meta{line-height:1}
   .points-meta .label{font-size:13px;opacity:.9}
   .points-meta .value{font-size:22px;font-weight:700;margin-top:4px}
 
-  /* menu */
   .menu{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
   .btn{
     background:linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.06));
@@ -86,11 +79,9 @@
   .btn .icon{width:36px;height:36px;background:linear-gradient(135deg,var(--neon), #6ffcff);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#022;}
   .btn .label{flex:1;text-align:left;font-size:16px}
 
-  /* small text and footer */
   .muted{font-size:13px;opacity:.85;color:rgba(255,255,255,0.92)}
   .footer{font-size:12px;color:rgba(255,255,255,0.6);text-align:center;margin:6px 0 24px}
 
-  /* modal */
   .modal{
     position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);min-width:280px;
     background:linear-gradient(180deg, rgba(6,6,23,0.96), rgba(3,3,15,0.96));
@@ -101,14 +92,7 @@
   .modal p{font-size:14px;opacity:.95}
   .modal .close{margin-top:12px;padding:10px;border-radius:10px;border:none;background:#222;color:#fff;cursor:pointer}
 
-  /* toast */
   .toast{position:fixed;left:14px;bottom:18px;background:rgba(0,0,0,0.6);padding:10px 14px;border-radius:12px;color:#fff;z-index:60;display:none}
-
-  /* small screens safe */
-  @media (max-width:420px){
-    .wrap{padding:0 10px}
-    .logo{width:46px;height:46px}
-  }
 </style>
 </head>
 <body>
@@ -178,7 +162,7 @@
 
   <div class="modal" id="modal-sobre">
     <h3>ℹ Sobre PlayWin</h3>
-    <p>PlayWin recompensa usuários por assistir anúncios — 1 moeda por anúncio. Segue as regras do monetizador.</p>
+    <p>PlayWin recompensa usuários por assistir anúncios — 1 moeda por anúncio.</p>
     <button class="close" onclick="closeModal('modal-sobre')">Fechar</button>
   </div>
 
@@ -186,74 +170,74 @@
 
 <script>
 /* ---------- Configurações ---------- */
-// autoShow: true = tenta abrir anúncio automaticamente ao entrar
 const autoShow = true;
-// valor em moedas por anúncio
 const rewardAmount = 1;
 
-/* ---------- Estado e utilitários ---------- */
+/* ---------- Estado ---------- */
 function getCoins(){ return parseInt(localStorage.getItem('playwin_coins')||'0'); }
-function setCoins(v){ localStorage.setItem('playwin_coins', String(v)); document.getElementById('pontos').innerText = v; document.getElementById('rewards-count').innerText = v; }
-function addCoins(n){ const v=getCoins()+n; setCoins(v); showToast('+'+n+' moeda(s)'); updateLevel(); }
-function showToast(text){
-  const t=document.getElementById('toast'); t.innerText = text; t.style.display='block';
-  setTimeout(()=> t.style.display='none',2200);
+function setCoins(v){
+  localStorage.setItem('playwin_coins', String(v));
+  document.getElementById('pontos').innerText = v;
+  document.getElementById('rewards-count').innerText = v;
 }
-function updateLevel(){
-  const c = getCoins();
-  const lvl = Math.floor(1 + c/10); document.getElementById('nivel').innerText = lvl;
+function addCoins(n){
+  const v=getCoins()+n;
+  setCoins(v);
+  showToast('+'+n+' moeda(s)');
+  updateLevel();
 }
 
-/* ---------- Modal helpers ---------- */
+/* ---------- NOVA LÓGICA DE NÍVEL ---------- */
+function updateLevel(){
+  const pontos = getCoins();
+  const nivel = Math.floor(pontos / 50) + 1;
+  document.getElementById('nivel').innerText = nivel;
+}
+
+/* ---------- Toast ---------- */
+function showToast(text){
+  const t=document.getElementById('toast');
+  t.innerText = text;
+  t.style.display='block';
+  setTimeout(()=> t.style.display='none',2200);
+}
+
+/* ---------- Modal ---------- */
 function openModal(id){ document.getElementById(id).style.display='block'; }
 function closeModal(id){ document.getElementById(id).style.display='none'; }
 
-/* ---------- Monetag Rewarded Interstitial ---------- */
+/* ---------- Ad Reward ---------- */
 async function assistirAnuncio(){
   try {
-    // chama o rewarded interstitial do Monetag
-    if (typeof show_10250519 !== 'function') {
-      showToast('Anúncio não carregado ainda, tente em alguns segundos.');
-      return;
-    }
+    const btn = document.getElementById('btn-watch');
+    btn.style.opacity=0.6; btn.style.pointerEvents='none';
 
-    // desativa botão até terminar
-    const btn = document.getElementById('btn-watch'); btn.style.opacity=0.6; btn.style.pointerEvents='none';
-
-    // show returns a promise that resolves when ad is watched
     await show_10250519();
 
-    // recompensa somente quando promise resolve
     addCoins(rewardAmount);
 
-    // reativa botão
     btn.style.opacity=1; btn.style.pointerEvents='auto';
   } catch(e){
-    console.error('Erro ao exibir anúncio:', e);
+    console.error(e);
     showToast('Falha ao carregar anúncio.');
-    // reativa botão
-    const btn = document.getElementById('btn-watch'); btn.style.opacity=1; btn.style.pointerEvents='auto';
+    const btn = document.getElementById('btn-watch');
+    btn.style.opacity=1; btn.style.pointerEvents='auto';
   }
 }
 
-/* ---------- Outros menus ---------- */
+/* ---------- Menus ---------- */
 function abrirRecompensas(){ openModal('modal-rewards'); }
 function abrirOfertas(){ openModal('modal-offers'); }
 function abrirSobre(){ openModal('modal-sobre'); }
 
-/* ---------- Inicialização ---------- */
+/* ---------- Init ---------- */
 document.addEventListener('DOMContentLoaded', ()=>{
   setCoins(getCoins());
   updateLevel();
 
-  // auto show opcional
   if (autoShow){
-    // tenta abrir após delay (pode falhar caso skd não carregue ainda)
     setTimeout(()=>{
-      // só tenta se usuário ainda não ganhou nas últimas X segundos (simples prevenção)
-      if (getCoins() === 0) {
-        assistirAnuncio();
-      }
+      if (getCoins() === 0) assistirAnuncio();
     }, 1400);
   }
 });
